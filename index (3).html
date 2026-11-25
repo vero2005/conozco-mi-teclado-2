@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Recurso educativo en 3D y realidad aumentada para aprender el teclado. 1.º y 2.º grado EGB."><title>Mi teclado en 3D · 1.º y 2.º grado</title>
+<style>
+:root{--card:#fff;--tx:#23233a;--pri:#3b82f6;--bar:rgba(20,28,55,.92);box-sizing:border-box}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#2b3047;--tx:#f4f4fb}}
+:root[data-theme="dark"]{--card:#2b3047;--tx:#f4f4fb}
+*{box-sizing:inherit}html,body{margin:0;height:100%;overflow:hidden}
+body{font-family:"Trebuchet MS",system-ui,sans-serif;font-size:17px;color:var(--tx);background:#dbeafe}
+#stage{position:fixed;inset:0;background:linear-gradient(#bfdbfe,#fef3c7);touch-action:none}
+#stage canvas{display:block;width:100%;height:100%;position:relative}
+#cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+#load{position:fixed;inset:0;z-index:20;background:#1e293b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+#top{position:fixed;top:0;left:0;right:0;z-index:6;display:flex;gap:6px;justify-content:space-between;align-items:center;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 8px;background:var(--bar);color:#fff}
+#top b{font-size:.95rem}
+button{font:inherit;border:0;border-radius:12px;padding:8px 12px;background:#e2e8f0;color:#1b1b2b;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+button:active{transform:translateY(2px);box-shadow:none}
+button.p{background:var(--pri);color:#fff}
+#nav{position:fixed;bottom:0;left:0;right:0;z-index:6;display:none;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--bar);color:#fff}
+#nav.on{display:flex}
+.panel{position:fixed;inset:0;z-index:10;display:none;overflow:auto;background:linear-gradient(160deg,#bfdbfe,#fde68a);padding:calc(14px + env(safe-area-inset-top,0px)) 14px 14px}
+.panel.on{display:block}
+.box{max-width:780px;margin:auto;background:var(--card);border-radius:24px;padding:18px;position:relative}
+.x{position:absolute;right:12px;top:12px}
+h1{font-size:2rem;margin:.2em 0}h2{margin:.2em 0}h3{margin:.8em 0 .2em}
+.tag{font-size:.8rem;letter-spacing:.08em;font-weight:bold;opacity:.7}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.mc{display:block;width:100%;text-align:left;padding:16px;font-size:1.1rem;border-radius:18px;color:#fff}
+#card{position:fixed;left:10px;right:10px;bottom:calc(64px + env(safe-area-inset-bottom,0px));max-width:680px;margin:auto;z-index:5;background:var(--card);border-radius:18px;padding:10px 14px;display:none;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+#card.on{display:block}
+#vid{position:fixed;left:10px;right:10px;bottom:10px;max-width:680px;margin:auto;z-index:8;background:var(--bar);color:#fff;border-radius:18px;padding:12px 14px;display:none}
+#vid.on{display:block}
+.bar{height:10px;background:#475569;border-radius:6px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:#4ade80;width:0}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;font-size:1.05rem}
+.ok{background:#86efac}.no{background:#fca5a5}
+ul{padding-left:1.1em;margin:.3em 0}li{margin:.2em 0}
+.sm{font-size:.92rem}
+kbd{background:#e2e8f0;color:#111;border-radius:6px;padding:1px 7px;font-weight:bold}
+</style></head><body>
+<div id="stage"><video id="cam" autoplay playsinline muted></video></div>
+<div id="load">Cargando modelos 3D…</div>
+<div id="top"><b>⌨️ Computación · 1.º y 2.º grado</b><span><button id="bRes">Restablecer</button> <button id="bAR" class="p">AR con cámara</button></span></div>
+<div id="card"></div>
+<div id="nav"><button id="bBack">‹ Volver</button><b id="cnt">1 / 8</b><button id="bNext" class="p">Siguiente ›</button><button id="bCont">☰ Contenido</button><button id="bMenu">≡ Menú</button><button id="bFund">i</button></div>
+
+<section class="panel on" id="cover"><div class="box" style="text-align:center;margin-top:8vh">
+<div class="tag">COMPUTACIÓN · 1.º Y 2.º GRADO · EGB ELEMENTAL</div><h1>¡Conozco mi teclado!</h1>
+<p style="font-size:1.15rem">Explora las partes del teclado en 3D, toca las teclas, mira el video, juega y comprueba lo que aprendiste. Un recurso con realidad aumentada para primero y segundo grado.</p>
+<button class="p" style="font-size:1.3rem;padding:14px 28px" onclick="show('menu')">▶ Inicio</button>
+<p class="sm" style="margin-top:20px">Autora: Verónica Elizabeth Chávez Calva<br>Unidad Educativa Particular Liceo Americano · Universidad de Loja</p></div></section>
+
+<section class="panel" id="menu"><div class="box"><h2>Menú</h2><p>¿Qué quieres hacer?</p>
+<p><b>Partes exploradas: <span id="prog">0</span> / 8</b></p>
+<div class="grid">
+<button class="mc" style="background:#3b82f6" onclick="show('ctn')">📖 Contenidos</button>
+<button class="mc" style="background:#f97316" onclick="openVid()">🎬 Video</button>
+<button class="mc" style="background:#16a34a" onclick="openEva()">🎮 Evaluación sumativa</button>
+<button class="mc" style="background:#8b5cf6" onclick="show('glo')">📚 Glosario</button>
+<button class="mc" style="background:#0d9488" onclick="show('ata')">⌨ Atajos</button>
+<button class="mc" style="background:#64748b" onclick="show('fund')">i Fundamentación pedagógica</button></div>
+<p><button onclick="show('cover')">‹ Inicio</button></p></div></section>
+
+<section class="panel" id="ctn"><div class="box"><button class="x" onclick="show('menu')">✕</button><h2>Contenidos</h2><p>Elige una parte del teclado para verla en 3D</p><div class="grid" id="ctnL"></div><p><button onclick="show('menu')">‹ Menú</button></p></div></section>
+
+<section class="panel" id="fund"><div class="box"><button class="x" onclick="back()">✕</button>
+<div class="tag">FUNDAMENTACIÓN PEDAGÓGICA</div><h2>Objetivo y destrezas</h2>
+<h3>🎯 Objetivo de aprendizaje</h3><p>Identificar el teclado como dispositivo de entrada de la computadora, reconocer sus partes principales y usarlo de forma correcta para escribir letras, números y palabras sencillas.</p>
+<h3>✅ Destrezas con criterio de desempeño</h3><ul><li>Identificar el teclado y explicar para qué sirve.</li><li>Reconocer las letras, los números, la barra espaciadora, Enter, Borrar, Shift y las flechas.</li><li>Relacionar cada grupo de teclas con su función.</li><li>Aplicar una postura y un modo de presionar las teclas adecuados.</li><li>Escribir su nombre o palabras cortas usando el teclado.</li></ul>
+<p class="sm" style="margin-top:16px"><b>Autora:</b> Verónica Elizabeth Chávez Calva<br>Unidad Educativa Particular Liceo Americano · Universidad de Loja</p>
+<button onclick="back()">‹ Volver</button></div></section>
+
+<section class="panel" id="eva"><div class="box"><button class="x" onclick="show('menu')">✕</button><div class="tag">EVALUACIÓN SUMATIVA</div><h2>6 preguntas · 1 punto cada una</h2><div id="evaB"></div><button onclick="openEva()">Reiniciar</button></div></section>
+
+<section class="panel" id="glo"><div class="box"><button class="x" onclick="show('menu')">✕</button><h2>Glosario</h2><p>Palabras del mundo del teclado</p><ul id="gloL"></ul><button onclick="show('menu')">‹ Volver</button></div></section>
+
+<section class="panel" id="ata"><div class="box"><button class="x" onclick="show('menu')">✕</button><h2>Atajos</h2><p>Navega más rápido con el teclado</p>
+<h3>Navegación 3D</h3><ul><li><kbd>←</kbd> <kbd>→</kbd> Parte anterior o siguiente</li><li><kbd>Esc</kbd> Cerrar el panel abierto</li></ul>
+<h3>Video</h3><ul><li><kbd>Espacio</kbd> Reproducir o pausar</li><li><kbd>J</kbd> / <kbd>L</kbd> Retroceder o adelantar 10 segundos</li></ul>
+<h3>Ratón o dedo</h3><ul><li>Arrastrar: girar el modelo · Rueda: acercar o alejar</li></ul>
+<button onclick="show('menu')">‹ Volver</button></div></section>
+
+<section class="panel" id="yt"><div class="box" style="text-align:center"><button class="x" onclick="show('menu')">✕</button><div class="tag">VIDEO</div><h2>Descubre los secretos de tu teclado</h2>
+<video id="vv" controls playsinline preload="metadata" style="max-width:100%;max-height:68vh;border-radius:16px;background:#000"></video>
+<p><button onclick="show('menu')">‹ Volver</button></p></div></section>
+<section id="vid"><b id="vcap"></b><div class="bar"><i id="vbar"></i></div>
+<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button id="vp" class="p">▶</button><button id="vb">⏪</button><button id="vf">⏩</button><span id="vt">0:00 / 1:00</span><button id="vs">🔊</button><button id="vx">✕</button></div></section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const G={l:["Letras",0x60a5fa],n:["Números",0xfb923c],e:["Espacio",0x4ade80],en:["Enter",0xa78bfa],b:["Borrar",0xf87171],s:["Shift",0x2dd4bf],f:["Flechas",0xfacc15]};
+const P=[["Teclado completo",null,"El teclado sirve para escribir en la computadora. Tiene letras, números y teclas especiales."],["Letras","l","Las letras sirven para escribir palabras y nombres."],["Números","n","Los números sirven para escribir cantidades."],["Barra espaciadora","e","La barra espaciadora deja un espacio entre palabras."],["Enter","en","Enter baja a la siguiente línea."],["Borrar","b","Borrar quita la última letra que escribiste."],["Shift","s","Shift, junto con una letra, la escribe en mayúscula."],["Flechas","f","Las flechas mueven el cursor hacia arriba, abajo, izquierda y derecha."]];
+const R=[[..."1234567890"].map(x=>[x,"n",1]).concat([["Borrar","b",2]]),[..."QWERTYUIOP"].map(x=>[x,"l",1]),[..."ASDFGHJKLÑ"].map(x=>[x,"l",1]).concat([["Enter","en",2]]),[["Shift","s",2]].concat([..."ZXCVBNM"].map(x=>[x,"l",1])),[["Espacio","e",6],["◀","f",1],["▲","f",1],["▼","f",1],["▶","f",1]]];
+const hex=c=>"#"+c.toString(16).padStart(6,"0");
+function say(t){if(mute)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="es-ES";u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
+let mute=false,idx=0,seen=new Set(),prev="cover",cur="cover",demo=null;
+// ---------- 3D
+const stage=$("stage"),renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});stage.appendChild(renderer.domElement);
+const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(45,1,.1,100);
+scene.add(new THREE.AmbientLight(0xffffff,.8));const dl=new THREE.DirectionalLight(0xffffff,.8);dl.position.set(6,12,8);scene.add(dl);
+const world=new THREE.Group();scene.add(world);
+function lbl(t){const c=document.createElement("canvas");c.width=128;c.height=64;const x=c.getContext("2d");x.fillStyle="#1b1b2b";x.font="bold "+(t.length>2?26:46)+"px sans-serif";x.textAlign="center";x.textBaseline="middle";x.fillText(t,64,34);return new THREE.CanvasTexture(c)}
+const kbd=new THREE.Group();world.add(kbd);
+const bs=new THREE.Mesh(new THREE.BoxGeometry(14.2,.5,6),new THREE.MeshStandardMaterial({color:0xcbd5e1}));bs.position.y=-.3;kbd.add(bs);
+const keys=[],pos={};
+R.forEach((r,ri)=>{const tot=r.reduce((a,k)=>a+k[2],0)+.1*(r.length-1);let x=-tot/2;r.forEach(([lb,g,w])=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w*.95+(w-1)*.05,.45,.9),new THREE.MeshStandardMaterial({color:G[g][1],transparent:true}));m.position.set(x+w/2,0,(ri-2)*1.1);m.userData={lb,g};const p=new THREE.Mesh(new THREE.PlaneGeometry(Math.min(w*.8,2.4),.55),new THREE.MeshBasicMaterial({map:lbl(lb),transparent:true}));p.rotation.x=-Math.PI/2;p.position.y=.24;m.add(p);kbd.add(m);keys.push(m);pos[lb]=m;x+=w+.1})});
+const pc=new THREE.Group();pc.position.set(0,0,-6.2);world.add(pc);
+const add=(g,c,x,y,z,w,h,d)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:c}));m.position.set(x,y,z);g.add(m)};
+add(pc,0x334155,0,3.8,0,10,6,.5);add(pc,0x475569,0,.5,0,1,1.6,.6);add(pc,0x475569,0,-.1,0,3.4,.2,2);
+const sc=document.createElement("canvas");sc.width=512;sc.height=300;const sx=sc.getContext("2d"),stx=new THREE.CanvasTexture(sc);
+const scr=new THREE.Mesh(new THREE.PlaneGeometry(9.3,5.3),new THREE.MeshBasicMaterial({map:stx}));scr.position.set(0,3.8,.27);pc.add(scr);
+let txt="";function draw(){sx.fillStyle="#fffdf5";sx.fillRect(0,0,512,300);sx.fillStyle="#1b1b2b";sx.font="36px sans-serif";sx.textBaseline="top";(txt+"|").split("\n").slice(-6).forEach((l,i)=>sx.fillText(l.slice(-26),16,16+i*46));stx.needsUpdate=true}draw();
+function hl(gs){keys.forEach(k=>{const on=!gs||gs.includes(k.userData.g);k.material.opacity=on?1:.2;k.children[0].material.opacity=on?1:.2})}
+function press(m,spk){const{lb,g}=m.userData;m.position.y=-.15;setTimeout(()=>m.position.y=0,160);if(lb==="Espacio")txt+=" ";else if(lb==="Borrar")txt=txt.slice(0,-1);else if(lb==="Enter")txt+="\n";else if(g==="l"||g==="n")txt+=lb;draw();const p=P.find(a=>a[1]===g);card("<b style='color:"+hex(G[g][1])+"'>"+lb+"</b> · "+p[2]);if(spk)say(p[0]+". "+p[2])}
+let drag=false,moved=0,lx=0,ly=0,tx=.45,ty=0,zoom=17,auto=false;const ray=new THREE.Raycaster(),mp=new THREE.Vector2();
+renderer.domElement.addEventListener("pointerdown",e=>{drag=true;moved=0;lx=e.clientX;ly=e.clientY});
+addEventListener("pointermove",e=>{if(!drag)return;moved+=Math.abs(e.clientX-lx)+Math.abs(e.clientY-ly);ty+=(e.clientX-lx)*.008;tx=Math.max(-.2,Math.min(.9,tx+(e.clientY-ly)*.006));lx=e.clientX;ly=e.clientY});
+addEventListener("pointerup",e=>{if(!drag)return;drag=false;if(moved<6&&e.target===renderer.domElement){const r=renderer.domElement.getBoundingClientRect();mp.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height*2-1));ray.setFromCamera(mp,cam);const h=ray.intersectObjects(keys,true)[0];if(h){let o=h.object;if(!o.userData.lb)o=o.parent;press(o,true)}}});
+addEventListener("wheel",e=>{if(cur==="explore"||cur==="cover"||cur===null)zoom=Math.max(9,Math.min(26,zoom+e.deltaY*.01))},{passive:true});
+function size(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}addEventListener("resize",size);size();
+(function loop(){requestAnimationFrame(loop);if(auto)ty+=.006;world.rotation.y+=(ty-world.rotation.y)*.15;world.rotation.x+=(tx-world.rotation.x)*.15;const zz=innerWidth<600?zoom*1.25:zoom;cam.position.set(0,zz*.58,zz);cam.lookAt(0,1,-1.5);renderer.render(scene,cam)})();
+$("load").style.display="none";
+// ---------- navegación
+function card(h){const c=$("card");c.innerHTML=h;c.classList.add("on")}
+function show(id){prev=cur;cur=id;["cover","menu","ctn","fund","eva","glo","ata","yt"].forEach(p=>$(p).classList.toggle("on",p===id));$("nav").classList.toggle("on",id==="explore"||id===null);if(id!=="explore"&&id!==null)$("card").classList.remove("on");if(id!=="explore")stopDemo();if(id!=="yt"){const v=$("vv");if(v)v.pause()}if(id!=="video")vStop(true);$("vid").classList.toggle("on",id==="video");$("prog").textContent=seen.size;auto=id==="cover"||id==="menu"}
+function back(){show(prev==="fund"?"menu":prev)}
+function explore(i){show("explore");idx=(i+P.length)%P.length;const[n,g,t]=P[idx];seen.add(n);$("prog").textContent=seen.size;$("cnt").textContent=(idx+1)+" / "+P.length+" · "+n;hl(g?[g]:null);card("<b>"+n+"</b><br>"+t);say(n+". "+t)}
+function stopDemo(){}
+$("bBack").onclick=()=>{stopDemo();explore(idx-1)};$("bNext").onclick=()=>{stopDemo();explore(idx+1)};
+$("bCont").onclick=()=>show("ctn");$("bMenu").onclick=()=>{hl(null);show("menu")};$("bFund").onclick=()=>show("fund");
+$("bRes").onclick=()=>{tx=.45;ty=0;zoom=17;txt="";draw();hl(null)};
+$("ctnL").innerHTML=P.map((p,i)=>'<button class="mc" style="background:'+(p[1]?hex(G[p[1]][1]):"#3b82f6")+';color:#1b1b2b" onclick="explore('+i+')">'+(i+1)+". "+p[0]+"</button>").join("");
+// ---------- AR
+let st=null;
+$("bAR").onclick=async()=>{if(st){st.getTracks().forEach(t=>t.stop());st=null;$("cam").style.display="none";$("bAR").textContent="AR con cámara";return}
+try{st=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});$("cam").srcObject=st;$("cam").style.display="block";$("bAR").textContent="Salir de AR";if(cur==="cover"||cur==="menu")explore(0)}catch(e){show(null);card("No se pudo abrir la cámara. Revisa el permiso del navegador.")}};
+// ---------- video
+const V=[["Este es el teclado. Sirve para escribir en la computadora.",null],["Estas son las letras. Con ellas escribimos palabras.",["l"]],["Estos son los números. Con ellos escribimos cantidades.",["n"]],["La barra espaciadora deja un espacio entre palabras.",["e"]],["Enter baja a la siguiente línea y Borrar quita lo que escribiste.",["en","b"]],["Shift hace letras mayúsculas y las flechas mueven el cursor. ¡Muy bien!",["s","f"]]];
+let vt=0,vi=null,vsc=-1;const fm=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+function vDraw(){const s=Math.min(5,Math.floor(vt/10));if(s!==vsc){vsc=s;$("vcap").textContent=V[s][0];hl(V[s][1]);say(V[s][0])}$("vbar").style.width=vt/60*100+"%";$("vt").textContent=fm(vt)+" / 1:00"}
+function openVid(){show("yt");const v=$("vv");if(!v.getAttribute("src"))v.src="video/Descubre_los_secretos_de_tu_teclado.mp4"}
+function openAnim(){show("video");hl(null);vt=0;vsc=-1;vDraw();vPlay()}
+function vPlay(){if(vi)return;$("vp").textContent="⏸";vi=setInterval(()=>{vt+=.25;if(vt>=60){vt=60;vDraw();vStop();return}vDraw()},250)}
+function vStop(q){clearInterval(vi);vi=null;$("vp").textContent="▶";if(!q)try{speechSynthesis.cancel()}catch(e){}}
+$("vp").onclick=()=>vi?vStop():vPlay();$("vb").onclick=()=>{vt=Math.max(0,vt-10);vDraw()};$("vf").onclick=()=>{vt=Math.min(60,vt+10);vDraw()};
+$("vs").onclick=()=>{mute=!mute;$("vs").textContent=mute?"🔇":"🔊"};$("vx").onclick=()=>{hl(null);show("menu")};
+// ---------- evaluación
+const Q=[["¿Qué tecla deja un espacio entre palabras?",["Enter","Barra espaciadora","Shift"],1],["¿Para qué sirven los números del teclado?",["Para escribir cantidades","Para borrar","Para mover el cursor"],0],["¿Qué tecla quita la última letra que escribiste?",["Borrar","Enter","Flechas"],0],["¿Qué tecla baja a la siguiente línea?",["Shift","Enter","Borrar"],1],["¿Cómo se presionan las teclas?",["Golpeando fuerte","Suave, una a la vez","Con todos los dedos juntos"],1],["¿Qué tecla ayuda a escribir letras mayúsculas?",["Shift","Espacio","Enter"],0]];
+let qi=0,pt=0;
+function openEva(){show("eva");qi=0;pt=0;ev()}
+function ev(){const b=$("evaB");if(qi>=Q.length){b.innerHTML="<h3>"+"⭐".repeat(pt)+" Obtuviste "+pt+" de "+Q.length+"</h3><p>"+(pt>=5?"¡Excelente trabajo!":pt>=3?"¡Muy bien! Puedes repasar los contenidos.":"¡Buen intento! Repasa los contenidos y vuelve a jugar.")+"</p>";return}
+const q=Q[qi];b.innerHTML="<h3>"+(qi+1)+". "+q[0]+"</h3>"+q[1].map((o,i)=>'<button class="opt" onclick="ans('+i+',this)">'+o+"</button>").join("");say(q[0])}
+function ans(i,el){const q=Q[qi],ok=i===q[2];el.classList.add(ok?"ok":"no");if(ok)pt++;document.querySelectorAll(".opt").forEach((o,j)=>{o.disabled=true;if(j===q[2])o.classList.add("ok")});setTimeout(()=>{qi++;ev()},1100)}
+// ---------- glosario
+$("gloL").innerHTML=[["Teclado","Aparato con teclas para escribir en la computadora."],["Tecla","Cada botón del teclado."],["Cursor","La rayita que parpadea y muestra dónde escribes."],["Mayúscula","Letra grande, como la A."],["Minúscula","Letra pequeña, como la a."],["Pantalla","Donde vemos lo que escribimos."],["Realidad aumentada","Ver cosas virtuales junto con el mundo real usando la cámara."]].map(g=>"<li><b>"+g[0]+":</b> "+g[1]+"</li>").join("");
+// ---------- teclado físico
+addEventListener("keydown",e=>{const k=e.key;if(k==="Escape"){hl(null);show(cur==="video"||cur==="eva"||cur==="yt"?"menu":null);return}
+if(cur==="explore"&&(k==="ArrowRight"||k==="ArrowLeft")){e.preventDefault();explore(idx+(k==="ArrowRight"?1:-1));return}
+
+if(cur==="video"){if(k===" "){e.preventDefault();vi?vStop():vPlay()}else if(k==="j"||k==="J")$("vb").click();else if(k==="l"||k==="L")$("vf").click();return}
+if(cur==="explore"||cur===null){const M={" ":"Espacio",Backspace:"Borrar",ArrowLeft:"◀",ArrowUp:"▲",ArrowDown:"▼",ArrowRight:"▶"};const n=M[k]||k.toUpperCase();if(pos[n]){e.preventDefault();press(pos[n],false)}}});
+</script></body></html>
